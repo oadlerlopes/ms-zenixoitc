@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>br.com.zenix.oitc</groupId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>OITC</name>
+	<description>OITC server system, shaded with core.</description>
+	<url>https://twitter.com/zenixcc</url>
+
+	<organization>
+		<name>Zenix</name>
+		<url>https://twitter.com/zenixcc</url>
+	</organization>
+
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<author>Zenix</author>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<licenses>
+		<license>
+			<name>Zlib License</name>
+			<url>http://opensource.org/licenses/Zlib</url>
+			<comments>Copyright (c) 2017 Adler Lopes
+            This software is provided 'as-is', without any express or implied
+            warranty. In no event will the authors be held liable for any damages
+            arising from the use of this software.
+
+            Permission is granted to anyone to use this software for any purpose,
+            including commercial applications, and to alter it and redistribute it
+            freely, subject to the following restrictions:
+
+            1. The origin of this software must not be misrepresented; you must not
+            claim that you wrote the original software. If you use this software
+            in a product, an acknowledgment in the product documentation would be
+            appreciated but is not required.
+
+            2. Altered source versions must be plainly marked as such, and must not be
+            misrepresented as being the original software.
+
+            3. This notice may not be removed or altered from any source
+            distribution.</comments>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Guilherme Fane</name>
+			<url>https://twitter.com/fanezinho</url>
+		</developer>
+		<developer>
+			<name>Adler Lopes</name>
+			<url>https://twitter.com/thetruzzi_</url>
+		</developer>
+	</developers>
+	
+    <repositories>
+        <repository>
+         <id>twitter4j.org</id>
+         <name>twitter4j.org Repository</name>
+         <url>http://twitter4j.org/maven2</url>
+         <releases>
+            <enabled>true</enabled>
+         </releases>
+         <snapshots>
+            <enabled>true</enabled>
+         </snapshots>
+         </repository>
+          <repository>
+            <id>dmulloy2-repo</id>
+            <url>http://repo.dmulloy2.net/content/groups/public/</url>
+        </repository>
+	</repositories>
+
+	<dependencies>
+	   <dependency>
+            <groupId>org.twitter4j</groupId>
+            <artifactId>twitter4j-core</artifactId>
+            <version>[4.0,)</version>
+        </dependency>
+		<dependency>
+			<groupId>br.com.zenix.core</groupId>
+			<artifactId>core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+			   <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib-API</artifactId>
+            <version>4.3.0</version>
+        </dependency>
+	</dependencies>
+
+	<build>
+		<finalName>${project.name}-${project.version}-original</finalName>
+		<sourceDirectory>src</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<defaultGoal>clean package</defaultGoal>
+		<directory>target</directory>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.4.3</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>Version.java.template</exclude>
+										<exclude>META-INF/</exclude>
+									</excludes>
+								</filter>
+							</filters>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<finalName>${project.name}-${project.version}-original</finalName>
+							<artifactSet>
+								<includes>
+									<include>br.com.zenix.core:core</include>
+									<include>redis.clients:jedis</include>
+									<include>com.comphenix.protocol:ProtocolLib-API</include>
+									<include>org.twitter4j:twitter4j-core</include>
+									<include>org.apache.commons:commons-pool2</include>
+									<include>com.google.code.gson:gson</include>
+								</includes>
+							</artifactSet>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.github.wvengen</groupId>
+				<artifactId>proguard-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<obfuscate>true</obfuscate>
+					<injar>${project.name}-${project.version}-original.jar</injar>
+					<outjar>${project.name}-${project.version}.jar</outjar>
+					<outputDirectory>${project.build.directory}</outputDirectory>
+					<proguardInclude>${basedir}/proguard.conf</proguardInclude>
+					<libs>
+						<lib>${java.home}/lib/rt.jar</lib>
+						<lib>${java.home}/lib/jsse.jar</lib>
+					</libs>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<artifactId>OITC</artifactId>
+</project>
